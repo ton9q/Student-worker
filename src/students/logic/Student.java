@@ -1,4 +1,4 @@
-package logic;
+package students.logic;
 
 import java.text.Collator;
 import java.text.DateFormat;

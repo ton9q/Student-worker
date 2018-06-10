@@ -1,4 +1,4 @@
-package logic;
+package students.logic;
 
 public class Group {
     // поле ИД ГРУППЫ
