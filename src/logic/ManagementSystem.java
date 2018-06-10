@@ -337,12 +337,8 @@ public class ManagementSystem {
         students.remove(delStudent);
     }
 
-    // Этот код позволяет нам изменить кодировку
-    // Такое может произойти если используется IDE - например NetBeans.
-    // Тогда вы получаете просто одни вопросы, что крайне неудобно читать
     public static void printString(Object s) {
             System.out.println(s.toString());
-
     }
 
     public static void printString() {
