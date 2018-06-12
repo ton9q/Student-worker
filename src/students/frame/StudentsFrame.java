@@ -9,7 +9,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-
 import javax.swing.JScrollPane;
 
 import javax.swing.JSpinner;
@@ -24,12 +23,12 @@ import students.logic.Student;
 
 public class StudentsFrame extends JFrame {
 
-    ManagementSystem ms = ManagementSystem.getInstance();
+    ManagementSystem ms = null;
     private JList grpList;
     private JList stdList;
     private JSpinner spYear;
 
-    public StudentsFrame() {
+    public StudentsFrame() throws Exception {
         // Устанавливаем layout для всей клиентской части формы
         getContentPane().setLayout(new BorderLayout());
 
@@ -57,8 +56,15 @@ public class StudentsFrame extends JFrame {
         left.setLayout(new BorderLayout());
         left.setBorder(new BevelBorder(BevelBorder.RAISED));
 
+        // Нам необходимо обработать ошибку при обращении к базе данных
+        Vector gr = null;
+        Vector st = null;
+        // Попробуем получить коннект к базе данных
+        ms = ManagementSystem.getInstance();
         // Получаем список групп
-        Vector<Group> gr = new Vector<Group>(ms.getGroups());
+        gr = new Vector<Group>(ms.getGroups());
+        // Получаем список студентов
+        st = new Vector<Student>(ms.getAllStudents());
         // Создаем надпись
         left.add(new JLabel("Группы:"), BorderLayout.NORTH);
         // Создаем визуальный список и вставляем его в скроллируемую
@@ -72,8 +78,6 @@ public class StudentsFrame extends JFrame {
         right.setLayout(new BorderLayout());
         right.setBorder(new BevelBorder(BevelBorder.RAISED));
 
-        // Получаем список студентов
-        Vector<Student> st = new Vector<Student>(ms.getAllStudents());
         // Создаем надпись
         right.add(new JLabel("Студенты:"), BorderLayout.NORTH);
         // Создаем визуальный список и вставляем его в скроллируемую
@@ -94,13 +98,17 @@ public class StudentsFrame extends JFrame {
     }
 
     public static void main(String args[]) {
-        // Запуск формы лучше производить в специальном треде
-        // event-dispatching thread - EDT
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                StudentsFrame sf = new StudentsFrame();
-                sf.setDefaultCloseOperation(EXIT_ON_CLOSE);
-                sf.setVisible(true);
+                try {
+                    // Мы сразу отменим продолжение работы, если не сможем получить
+                    // коннект к базе данных
+                    StudentsFrame sf = new StudentsFrame();
+                    sf.setDefaultCloseOperation(EXIT_ON_CLOSE);
+                    sf.setVisible(true);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }
         });
     }
