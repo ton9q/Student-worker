@@ -218,17 +218,29 @@ public class StudentsFrame extends JFrame implements ActionListener, ListSelecti
             // Переопределяем в нем метод run
             public void run() {
                 if (stdList != null) {
-                    // Получаем выделенную группу
-                    Group g = (Group) grpList.getSelectedValue();
-                    // Получаем число из спинера
-                    int y = ((SpinnerNumberModel) spYear.getModel()).getNumber().intValue();
-                    try {
-                        // Получаем список студентов
-                        Collection<Student> s = ms.getStudentsFromGroup(g, y);
-                        // И устанавливаем модель для таблицы с новыми данными
-                        stdList.setModel(new StudentTableModel(new Vector<Student>(s)));
-                    } catch (SQLException e) {
-                        JOptionPane.showMessageDialog(StudentsFrame.this, e.getMessage());
+                    // Проверяем выбрана ли группа
+                    if (!grpList.isSelectionEmpty()) {
+                        // Получаем выделенную группу
+                        Group g = (Group) grpList.getSelectedValue();
+                        // Получаем число из спинера
+                        int y = ((SpinnerNumberModel) spYear.getModel()).getNumber().intValue();
+                        try {
+                            // Получаем список студентов
+                            Collection<Student> s = ms.getStudentsFromGroup(g, y);
+                            // И устанавливаем модель для таблицы с новыми данными
+                            stdList.setModel(new StudentTableModel(new Vector<Student>(s)));
+                        } catch (SQLException e) {
+                            JOptionPane.showMessageDialog(StudentsFrame.this, e.getMessage());
+                        }
+                    } else {
+                        try {
+                            // Получаем список студентов
+                            Collection<Student> s = ms.getAllStudents();
+                            // И устанавливаем модель для таблицы с новыми данными
+                            stdList.setModel(new StudentTableModel(new Vector<Student>(s)));
+                        } catch (SQLException e) {
+                            JOptionPane.showMessageDialog(StudentsFrame.this, e.getMessage());
+                        }
                     }
                 }
             }
@@ -396,7 +408,10 @@ public class StudentsFrame extends JFrame implements ActionListener, ListSelecti
 
     // метод для показа всех студентов
     private void showAllStudents() {
-        JOptionPane.showMessageDialog(this, "showAllStudents");
+        grpList.clearSelection();
+
+        reloadStudents();
+
     }
 
     public static void main(String args[]) {
